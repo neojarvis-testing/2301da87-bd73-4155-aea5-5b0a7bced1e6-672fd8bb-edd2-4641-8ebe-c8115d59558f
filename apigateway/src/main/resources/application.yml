@@ -5,4 +5,26 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: 
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enable: true
+          lower-case-service-id: true
+      routes: 
+        -id: user-service
+        uri: lb://springappuser
+        predicates: - Path=/api/user/**, /api/login, /api/register
+        -id: feedback-service
+        uri: lb://springappfeedback
+        predicates: - Path=/api/feedback/**
+        -id: wifi-service
+        uri: lb://springappwifizone
+        predicates: - Path=/api/wifiScheme/**, /api/wifiSchemeRequest/**
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
