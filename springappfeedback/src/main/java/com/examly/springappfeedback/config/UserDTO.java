@@ -1,14 +1,6 @@
-package com.examly.springappwifi.model;
+package com.examly.springappfeedback.config;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-@Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDTO {
     private Long userId;
     private String email;
     private String password;
@@ -50,11 +42,6 @@ public class User {
     }
     public void setUserRole(String userRole) {
         this.userRole = userRole;
-    }
-    @Override
-    public String toString() {
-        return "User [userId=" + userId + ", email=" + email + ", password=" + password + ", username=" + username
-                + ", mobileNumber=" + mobileNumber + ", userRole=" + userRole + "]";
     }
     
 }

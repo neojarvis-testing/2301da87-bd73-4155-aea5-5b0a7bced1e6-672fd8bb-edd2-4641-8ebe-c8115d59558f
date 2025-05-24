@@ -1,8 +1,17 @@
-package main.java.com.examly.springappuser.service;
+package com.examly.springappuser.service;
 
-import java.net.Authenticator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
-import main.java.com.examly.springappuser.repository.UserRepo;
+import com.examly.springappuser.config.JwtUtils;
+import com.examly.springappuser.model.LoginDTO;
+import com.examly.springappuser.model.User;
+import com.examly.springappuser.repository.UserRepo;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -11,7 +20,7 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
-    private AuthernticationManager authernticationManager;
+    private AuthenticationManager authernticationManager;
     
     @Override
     public User createUser(User user){

@@ -1,4 +1,9 @@
-package main.java.com.examly.springappuser.model;
+package com.examly.springappuser.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class User {

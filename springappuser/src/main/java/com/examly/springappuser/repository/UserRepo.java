@@ -1,8 +1,11 @@
-package main.java.com.examly.springappuser.repository;
+package com.examly.springappuser.repository;
 
 import java.util.Optional;
 
-import main.java.com.examly.springappuser.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.examly.springappuser.model.User;
 
 @Repository
 public interface UserRepo extends JpaRepository<User,Long>{

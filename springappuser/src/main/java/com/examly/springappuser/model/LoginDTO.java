@@ -1,4 +1,6 @@
-package main.java.com.examly.springappuser.model;
+package com.examly.springappuser.model;
+
+
 
 public class LoginDTO {
     private String email;

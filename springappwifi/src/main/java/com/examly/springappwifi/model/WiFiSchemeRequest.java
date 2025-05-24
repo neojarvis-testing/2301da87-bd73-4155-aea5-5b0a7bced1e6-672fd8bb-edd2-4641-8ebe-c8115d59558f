@@ -1,16 +1,24 @@
-package main.java.com.examly.springappwifi.model;
+package com.examly.springappwifi.model;
 
 import java.time.LocalDate;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class WiFiSchemeRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long wifiSchemeRequestId;
-    @ManytoOne
+    @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
-    @ManytoOne
+    @ManyToOne
     @JoinColumn(name="wifiSchemeId")
     private WiFiScheme wiFiScheme;
     private LocalDate requesDate;
