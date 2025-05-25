@@ -7,8 +7,8 @@ import com.examly.springappfeedback.model.Feedback;
 
 public interface FeedbackService {
     Feedback creatFeedback(Feedback feedback);
-    Optional<Feedback> getFeedbackById(Long feedbackId);
+    Optional<Feedback> getFeedbackById(Long id);
     List<Feedback> getAllFeedbacks();
-    boolean deleteFeedback(Long feedbackId);
+    boolean deleteFeedback(Long id);
     List<Feedback> getFeedbackByUserId(Long userId);
 }

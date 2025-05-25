@@ -2,29 +2,29 @@ package com.examly.springappfeedback.model;
 
 import java.time.LocalDate;
 
-import com.examly.springappfeedback.config.UserDTO;
-import com.examly.springappfeedback.config.WiFiSchemeDTO;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "feedbacks")
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long feedbackId;
+    @Column(nullable = false)
     private String feedbackText;
+    @Column(nullable = false)
     private LocalDate date;
-    private Long userId;
-    @Transient
-    private UserDTO userDTO;
-    @Transient
-    private WiFiSchemeDTO wiFiSchemeDTO;
-    private Long wifiSchemeId;
+    @Column(nullable = false)
     private String category;
+    @Column(nullable = false)
+    private Long userId;
+    @Column(nullable = false)
+    private Long wifiSchemeId;
     public Long getFeedbackId() {
         return feedbackId;
     }
@@ -43,35 +43,23 @@ public class Feedback {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-    public Long getUserId() {
-        return userId;
-    }
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
     public String getCategory() {
         return category;
     }
     public void setCategory(String category) {
         this.category = category;
     }
+    public Long getUserId() {
+        return userId;
+    }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
     public Long getWifiSchemeId() {
         return wifiSchemeId;
     }
     public void setWifiSchemeId(Long wifiSchemeId) {
         this.wifiSchemeId = wifiSchemeId;
-    }
-    public UserDTO getUserDTO() {
-        return userDTO;
-    }
-    public void setUserDTO(UserDTO userDTO) {
-        this.userDTO = userDTO;
-    }
-    public WiFiSchemeDTO getWiFiSchemeDTO() {
-        return wiFiSchemeDTO;
-    }
-    public void setWiFiSchemeDTO(WiFiSchemeDTO wiFiSchemeDTO) {
-        this.wiFiSchemeDTO = wiFiSchemeDTO;
     }
     
 }
