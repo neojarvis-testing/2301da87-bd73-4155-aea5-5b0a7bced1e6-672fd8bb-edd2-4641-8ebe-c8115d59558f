@@ -19,6 +19,8 @@ import com.examly.springappfeedback.dto.WiFiSchemeDTO;
 import com.examly.springappfeedback.model.Feedback;
 import com.examly.springappfeedback.service.FeedbackService;
 
+import feign.FeignException;
+
 @RestController
 @RequestMapping("/api/feedback")
 public class FeedbackController {
@@ -35,6 +37,9 @@ public class FeedbackController {
         UserDTO userDTO;
         try{
             userDTO = userClient.getUserById(feedback.getUserId());
+        }
+        catch(FeignException.NotFound e){
+            return ResponseEntity.badRequest().body("In valid user Id");
         }
         catch(Exception e){
             return ResponseEntity.badRequest().body("In valid user Id");

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,14 +28,14 @@ public class WiFiSchemeRequestController {
     private WiFiSchemeRequestService requestService;
 
     @PostMapping
-    @PreAuthorize("hasRole('USER)")
+    // @PreAuthorize("hasRole('USER)")
     public ResponseEntity<WiFiSchemeRequest> addWiFiSchemeRequest(@RequestBody WiFiSchemeRequest request){
         WiFiSchemeRequest created = requestService.addWiFiSchemeRequest(request);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<WiFiSchemeRequest>> getAllWiFiSchemeRequests(){
         return ResponseEntity.ok(requestService.getAllWiFiSchemeRequests());
     }
@@ -45,18 +44,18 @@ public class WiFiSchemeRequestController {
         return requestService.getWiFiSchemeRequestById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<WiFiSchemeRequest> updateRequest(@PathVariable Long id,@RequestBody WiFiSchemeRequest request){
         return ResponseEntity.ok(requestService.updateWiFiSchemeRequest(id, request));
     }
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER',ADMIN)")
+    // @PreAuthorize("hasAnyRole('USER',ADMIN)")
     public ResponseEntity<Void> deleteRequest(@PathVariable Long id){
         boolean deleted = requestService.deleteWiFiSchemeRequest(id);
         return deleted?ResponseEntity.noContent().build():ResponseEntity.notFound().build();
     }
     @GetMapping("/user/{userId}")
-    @PreAuthorize("hasRole('USER')")
+    // @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<WiFiSchemeRequest>> getRequestByUserId(@PathVariable Long userId){
         return ResponseEntity.ok(requestService.getWiFiSchemeRequestsByUserId(userId));
     }

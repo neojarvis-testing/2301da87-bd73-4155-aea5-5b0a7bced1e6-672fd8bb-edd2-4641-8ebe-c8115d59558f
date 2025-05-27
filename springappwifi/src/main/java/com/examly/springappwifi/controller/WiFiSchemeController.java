@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +25,7 @@ public class WiFiSchemeController {
     @Autowired
     private WiFiSchemeService schemeService;
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<WiFiScheme> addWiFiScheme(@RequestBody WiFiScheme scheme){
         return new ResponseEntity<>(schemeService.addWiFiScheme(scheme),HttpStatus.CREATED);
     }
@@ -39,12 +38,12 @@ public class WiFiSchemeController {
         return schemeService.getWiFiSchemeById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<WiFiScheme> updateWiFiScheme(@PathVariable Long id, @RequestBody WiFiScheme scheme){
         return ResponseEntity.ok(schemeService.updateWiFiScheme(id, scheme));
     }
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteWiFiScheme(@PathVariable Long id){
         schemeService.deleteWiFiScheme(id);
         return ResponseEntity.noContent().build();

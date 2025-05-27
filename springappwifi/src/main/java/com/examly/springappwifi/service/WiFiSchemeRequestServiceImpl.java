@@ -46,7 +46,7 @@ public class WiFiSchemeRequestServiceImpl implements WiFiSchemeRequestService{
 
     @Override
     public List<WiFiSchemeRequest> getWiFiSchemeRequestsByUserId(Long userId) {
-        return requestRepo.findByUserId(userId);  
+        return requestRepo.findByUser_UserId(userId);  
     }
     
 }

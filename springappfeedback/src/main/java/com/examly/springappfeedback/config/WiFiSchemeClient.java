@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.examly.springappfeedback.dto.WiFiSchemeDTO;
 
-@FeignClient(name = "springappwifizone")
+@FeignClient(name = "springappwifi")
 public interface WiFiSchemeClient {
     @GetMapping("/api/wifischeme/{id}")
     WiFiSchemeDTO getWiFiSchemeById(@PathVariable("id") Long id);

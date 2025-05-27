@@ -1,40 +1,38 @@
 package com.examly.springappuser.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.examly.springappuser.config.JwtUtils;
-import com.examly.springappuser.model.LoginDTO;
 import com.examly.springappuser.model.User;
 import com.examly.springappuser.repository.UserRepo;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UserServiceImpl implements UserService{
-    @Autowired
     private UserRepo userRepo;
+    private PasswordEncoder passwordEncoder;
     @Autowired
-    private JwtUtils jwtUtils;
-    @Autowired
-    private AuthenticationManager authernticationManager;
-    
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder) {
+        this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
+    }
     @Override
     public User createUser(User user){
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        return userRepo.save(user);
+       if(userRepo.findByEmail(user.getEmail())!=null){
+        throw new IllegalArgumentException("User already exits");
+       }
+       user.setPassword(passwordEncoder.encode(user.getPassword()));
+       return userRepo.save(user);
     }
-
     @Override
-    public String loginUser(LoginDTO loginDto){
-        Authentication auth = authernticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-            loginDto.getEmail(),
-            loginDto.getPassword()
-        ));
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        return jwtUtils.generateToken(auth);
+    public User loginUser(String email, String password){
+        User existingUser = userRepo.findByEmail(email);
+        if(existingUser ==null||!passwordEncoder.matches(password, existingUser.getPassword())){
+            throw new EntityNotFoundException("Invalid");
+        }
+        return existingUser;
     }
+    
 }

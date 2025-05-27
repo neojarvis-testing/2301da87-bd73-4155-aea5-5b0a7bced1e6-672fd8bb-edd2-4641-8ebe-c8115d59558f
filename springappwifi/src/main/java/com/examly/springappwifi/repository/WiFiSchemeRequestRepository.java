@@ -9,5 +9,5 @@ import com.examly.springappwifi.model.WiFiSchemeRequest;
 
 @Repository
 public interface WiFiSchemeRequestRepository extends JpaRepository<WiFiSchemeRequest,Long>{
-    List<WiFiSchemeRequest> findByUserId(Long userId);
+    List<WiFiSchemeRequest> findByUser_UserId(Long userId);
 }

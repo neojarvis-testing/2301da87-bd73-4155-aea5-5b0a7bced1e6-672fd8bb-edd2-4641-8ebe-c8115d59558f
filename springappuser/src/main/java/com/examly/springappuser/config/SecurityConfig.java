@@ -1,39 +1,102 @@
 package com.examly.springappuser.config;
 
-import java.security.Security;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private JwtAuthenticationFilter jwtFilter;
+    private MyUserDetailsService myUserDetailsService;
     @Autowired
-    JwtAuthenticationFilter jwtFilter;
+    public SecurityConfig(JwtAuthenticationFilter jwtFilter, MyUserDetailsService myUserDetailsService) {
+        this.jwtFilter = jwtFilter;
+        this.myUserDetailsService = myUserDetailsService;
+    }
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        http.csrf().disable().authorizeRequests().andMatchers("/api/register","/api/login").permitAll()
-        .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
+    public SecurityFilterChain filterChain(HttpSecurity http)throws Exception{
+        System.out.println("------------------------------------------------");
+        System.out.println("------------------------------------------------");
+        System.out.println("------------------------------------------------");
+        System.out.println(" EUSer------- User");
+        System.out.println("------------------------------------------------");
+        System.out.println("------------------------------------------------");
+        System.out.println("------------------------------------------------");
+        http.csrf(csrf->csrf.disable()).authorizeHttpRequests(auth -> auth.requestMatchers("/api/login","/api/register").permitAll()
+        .anyRequest().authenticated()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authenticationProvider(authenticationProvider());
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-    @Bean
-    public AuthenticationManager authManager(HttpSecurity http)throws Exception{
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-        .userDetailsService(userDetailsService())
-        .passwordEncder(new BCryptPasswordEncoder()).and().build();
+     @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
     @Bean
-    public userDetailsService userDetailsService(){
-        return new MyUserDetailsService();
+    public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception{
+        return config.getAuthenticationManager();
     }
+
+     @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(myUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+    // private JwtAuthenticationEntryPoint unauthorizedHandler;
+    // @Autowired
+    // public SecurityConfig(JwtAuthenticationFilter jwtFilter, MyUserDetailsService myUserDetailsService, JwtAuthenticationEntryPoint unauthorizedHandler) {
+    //     this.jwtFilter = jwtFilter;
+    //     this.myUserDetailsService=myUserDetailsService;
+    //     this.unauthorizedHandler=unauthorizedHandler;
+    // }
+
+    // @Bean
+    // public UserDetailsService userDetailsService() {
+    //     return myUserDetailsService;
+    // }
+    
+    // @Bean
+    // public BCryptPasswordEncoder passwordEncoder() {
+    //     return new BCryptPasswordEncoder();
+    // }
+
+    // @Bean
+    // public DaoAuthenticationProvider authenticationProvider() {
+    //     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+    //     authProvider.setUserDetailsService(myUserDetailsService);
+    //     authProvider.setPasswordEncoder(passwordEncoder());
+    //     return authProvider;
+    // }
+
+    // @Bean
+    // public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception {
+    //     return config.getAuthenticationManager();
+    // }
+    
+    // @Bean
+    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    //     http.csrf(csrf -> csrf.disable())
+    //     .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
+    //     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    //                     .authenticationProvider(authenticationProvider())
+    //                     .authorizeHttpRequests(
+    //             auth -> auth.requestMatchers("/api/register", "/api/login").permitAll().anyRequest().authenticated())
+    //             .authenticationProvider(authenticationProvider())
+    //                     .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+    //             return http.build();
+    // }
 }

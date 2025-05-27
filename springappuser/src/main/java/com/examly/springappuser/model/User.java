@@ -1,8 +1,6 @@
 package com.examly.springappuser.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,7 +14,7 @@ public class User {
     private String password;
     private String username;
     private String mobileNumber;
-    private String role;
+    private String userRole;
     
     public Long getUserId() {
         return userId;
@@ -49,17 +47,19 @@ public class User {
         this.mobileNumber = mobileNumber;
     }
     
+   
     @Override
     public String toString() {
         return "User [userId=" + userId + ", email=" + email + ", password=" + password + ", username=" + username
-                + ", mobileNumber=" + mobileNumber + ", role=" + role + "]";
+                + ", mobileNumber=" + mobileNumber + ", userRole=" + userRole + "]";
     }
-    public String getRole() {
-        return role;
+    public String getUserRole() {
+        return userRole;
     }
-    public void setRole(String role) {
-        this.role = role;
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
     }
+    
     
     
 }
