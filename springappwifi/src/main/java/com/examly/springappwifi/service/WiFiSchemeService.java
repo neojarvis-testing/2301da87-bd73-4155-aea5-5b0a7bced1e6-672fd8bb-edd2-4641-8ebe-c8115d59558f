@@ -1,14 +1,21 @@
 package com.examly.springappwifi.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.examly.springappwifi.model.WiFiScheme;
+import org.springframework.stereotype.Service;
 
-public interface WiFiSchemeService {
-    WiFiScheme addWiFiScheme(WiFiScheme scheme);
-    Optional<WiFiScheme> getWiFiSchemeById(Long id);
-    List<WiFiScheme> getAllWiFiSchemes();
-    WiFiScheme updateWiFiScheme(Long id, WiFiScheme scheme);
-    WiFiScheme deleteWiFiScheme(Long id);
+import com.examly.springappwifi.model.WiFiSchema;
+
+@Service
+public interface WiFiSchemaService {
+
+    WiFiSchema createWiFiSchema(WiFiSchema wifiSchema);
+
+    WiFiSchema getWiFiSchemaById(long wifiSchemeId);
+
+    List<WiFiSchema> getAllWiFiSchemas();
+
+
+
+    
 }
