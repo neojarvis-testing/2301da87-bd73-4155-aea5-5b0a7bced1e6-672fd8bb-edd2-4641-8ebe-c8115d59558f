@@ -1,38 +1,60 @@
 package com.examly.springappuser.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import java.util.List;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.examly.springappuser.config.JwtUtils;
+import com.examly.springappuser.config.UserPrinciple;
+import com.examly.springappuser.model.LoginDTO;
 import com.examly.springappuser.model.User;
 import com.examly.springappuser.repository.UserRepo;
-
-import jakarta.persistence.EntityNotFoundException;
+import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService{
-    private UserRepo userRepo;
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder) {
+public class UserServiceImpl implements UserService {
+
+    private final PasswordEncoder encoder;
+    private final UserRepo userRepo;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
+
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder encoder,
+            AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
         this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
+        this.encoder = encoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtils = jwtUtils;
     }
+
     @Override
-    public User createUser(User user){
-       if(userRepo.findByEmail(user.getEmail())!=null){
-        throw new IllegalArgumentException("User already exits");
-       }
-       user.setPassword(passwordEncoder.encode(user.getPassword()));
-       return userRepo.save(user);
+    public String createUser(User user) {
+
+        user.setPassword(encoder.encode(user.getPassword()));
+        userRepo.save(user);
+        return "User registered successfully";
+
     }
+
     @Override
-    public User loginUser(String email, String password){
-        User existingUser = userRepo.findByEmail(email);
-        if(existingUser ==null||!passwordEncoder.matches(password, existingUser.getPassword())){
-            throw new EntityNotFoundException("Invalid");
-        }
-        return existingUser;
+    public LoginDTO loginUser(User user) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserPrinciple userDetails = (UserPrinciple) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .toList();
+
+        return new LoginDTO(jwt, userDetails.getUsername(), roles.get(0), userDetails.getUserId());
+
     }
-    
+
 }
