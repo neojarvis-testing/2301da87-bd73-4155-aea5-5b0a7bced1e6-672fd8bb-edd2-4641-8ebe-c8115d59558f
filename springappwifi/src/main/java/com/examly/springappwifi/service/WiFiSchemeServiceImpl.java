@@ -1,43 +1,35 @@
 package com.examly.springappwifi.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.examly.springappwifi.model.WiFiScheme;
-import com.examly.springappwifi.repository.WiFiSchemeRepository;
+import com.examly.springappwifi.model.WiFiSchema;
+import com.examly.springappwifi.repository.WiFiSchemaRepo;
+
 @Service
-public class WiFiSchemeServiceImpl implements WiFiSchemeService{
-    @Autowired
-    private WiFiSchemeRepository schemeRepo;
-    @Override
-    public WiFiScheme addWiFiScheme(WiFiScheme scheme) {
-        return schemeRepo.save(scheme);
+public class WiFiSchemaServiceImpl implements WiFiSchemaService {
+
+    private final WiFiSchemaRepo wifiSchemaRepo;
+
+    public WiFiSchemaServiceImpl(WiFiSchemaRepo wifiSchemaRepo) {
+        this.wifiSchemaRepo = wifiSchemaRepo;
     }
 
     @Override
-    public Optional<WiFiScheme> getWiFiSchemeById(Long id) {
-        return schemeRepo.findById(id);
+    public WiFiSchema createWiFiSchema(WiFiSchema wifiSchema) {
+        return wifiSchemaRepo.save(wifiSchema);
     }
 
     @Override
-    public List<WiFiScheme> getAllWiFiSchemes() {
-        return schemeRepo.findAll();
+    public WiFiSchema getWiFiSchemaById(long wifiSchemeId) {
+        return wifiSchemaRepo.findById(wifiSchemeId)
+                .orElseThrow(() -> new RuntimeException("WiFi Schema not found with id: " + wifiSchemeId));
     }
 
     @Override
-    public WiFiScheme updateWiFiScheme(Long id, WiFiScheme scheme) {
-       scheme.setWifiSchemeId(id);
-       return schemeRepo.save(scheme);
+    public List<WiFiSchema> getAllWiFiSchemas() {
+        return wifiSchemaRepo.findAll();
     }
 
-    @Override
-    public WiFiScheme deleteWiFiScheme(Long id) {
-       WiFiScheme scheme = schemeRepo.findById(id).orElseThrow();
-       schemeRepo.delete(scheme);
-       return scheme;
-    }
-    
 }
