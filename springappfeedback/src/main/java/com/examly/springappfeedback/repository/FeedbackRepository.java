@@ -9,5 +9,5 @@ import com.examly.springappfeedback.model.Feedback;
 
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback,Long>{
-    List<Feedback> findByUserId(Long userId);
+    List<Feedback> findByUser_UserId(Long userId);
 }
