@@ -1,10 +1,10 @@
 package com.examly.springappfeedback.controller;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,71 +12,38 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.examly.springappfeedback.config.UserClient;
-import com.examly.springappfeedback.config.WiFiSchemeClient;
-import com.examly.springappfeedback.dto.UserDTO;
-import com.examly.springappfeedback.dto.WiFiSchemeDTO;
 import com.examly.springappfeedback.model.Feedback;
 import com.examly.springappfeedback.service.FeedbackService;
-
-import feign.FeignException;
 
 @RestController
 @RequestMapping("/api/feedback")
 public class FeedbackController {
+
     private final FeedbackService feedbackService;
-    private final UserClient userClient;
-    private final WiFiSchemeClient wiFiSchemeClient;
-    public FeedbackController(FeedbackService feedbackService,UserClient userClient, WiFiSchemeClient wiFiSchemeClient){
-        this.feedbackService=feedbackService;
-        this.userClient=userClient;
-        this.wiFiSchemeClient=wiFiSchemeClient;
+
+    public FeedbackController(FeedbackService feedbackService) {
+        this.feedbackService = feedbackService;
     }
+
+    @PreAuthorize("hasRole('User')")
     @PostMapping
-    public ResponseEntity<?> createFeedback(@RequestBody Feedback feedback){
-        UserDTO userDTO;
-        try{
-            userDTO = userClient.getUserById(feedback.getUserId());
-        }
-        catch(FeignException.NotFound e){
-            return ResponseEntity.badRequest().body("In valid user Id");
-        }
-        catch(Exception e){
-            return ResponseEntity.badRequest().body("In valid user Id");
-        }
-        WiFiSchemeDTO wiFiSchemeDTO;
-        try{
-            wiFiSchemeDTO = wiFiSchemeClient.getWiFiSchemeById(feedback.getWifiSchemeId());
-        }
-        catch(Exception e){
-            return ResponseEntity.badRequest().body("Invalid WiFi Scheme ID");
-        }
-        Feedback savedFeedback = feedbackService.creatFeedback(feedback);
-        return ResponseEntity.ok(savedFeedback);
+    public ResponseEntity<Feedback> createFeedback(@RequestBody Feedback feedback) {
+        Feedback createdFeedback = feedbackService.createFeedback(feedback);
+        return new ResponseEntity<>(createdFeedback, HttpStatus.CREATED);
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getFeedbackById(@PathVariable Long id){
-        Optional<Feedback> feedback = feedbackService.getFeedbackById(id);
-        return feedback.<ResponseEntity<?>>map(ResponseEntity::ok).orElseGet(()->ResponseEntity.notFound().build());
-    }
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Feedback>> getFeedbackByUser(@PathVariable Long userId){
-        List<Feedback> feedbacks= feedbackService.getFeedbackByUserId(userId);
-        return ResponseEntity.ok(feedbacks);
-    }
+
+    @PreAuthorize("hasRole('Admin')")
     @GetMapping
-    public ResponseEntity<List<Feedback>> getAllFeedbacks(){
-        List<Feedback> feedbacks=feedbackService.getAllFeedbacks();
-        return ResponseEntity.ok(feedbacks);
+    public ResponseEntity<List<Feedback>> getAllFeedback() {
+        List<Feedback> feedbackList = feedbackService.getAllFeedback();
+        return new ResponseEntity<>(feedbackList, HttpStatus.OK);
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?>deleteFeedback(@PathVariable long id){
-        boolean deleted = feedbackService.deleteFeedback(id);
-        if(deleted){
-            return ResponseEntity.ok("Feedback deleted successfully");
-        }
-        else{
-            return ResponseEntity.notFound().build();
-        }
+
+    @PreAuthorize("hasRole('User')")
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Feedback>> getFeedbackByUserId(@PathVariable Long userId) {
+        List<Feedback> feedbackList = feedbackService.getFeedbackByUserId(userId);
+        return new ResponseEntity<>(feedbackList, HttpStatus.OK);
     }
+
 }
